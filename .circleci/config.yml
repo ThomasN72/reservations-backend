@@ -9,26 +9,15 @@ orbs:
 jobs:
   pylint:
     working_directory: /app
-    # docker:
-    #   - image: ${ARTIFACTORY_REGISTRY}
-    #     auth:
-    #       username: ${ARTIFACTORY_USER}
-    #       password: ${ARTIFACTORY_API_KEY}
     steps:
       - checkout
       - run: pip3 install pylint pylint_django
       - run: ls
-      # remove --disable=no-member in the future. pylint falsely think that django models.TextChoices is a Tuple
-      # add --load-plugins=pylint_django.checkers.db_performance?
       - run: find . -type f -name "*.py" | grep -v 'migrations' | grep -v 'tests' | grep -E '.py$' | xargs pylint -E --load-plugins=pylint_django --disable=no-member
 
   deployment_checklist:
     working_directory: /app
     docker:
-      #   - image: ${ARTIFACTORY_REGISTRY}
-      #     auth:
-      #       username: ${ARTIFACTORY_USER}
-      #       password: ${ARTIFACTORY_API_KEY}
       - image: circleci/postgres:latest
         environment:
           POSTGRES_USER: postgres
@@ -36,34 +25,6 @@ jobs:
           POSTGRES_PASSWORD: postgres
     steps:
       - run: python manage.py check --deploy --fail-level ERROR
-      - run: coverage run --source='.' manage.py test
-      - run: coverage report
-      - run: coverage xml -o coverage-reports/coverage.xml
-      - store_artifacts:
-          path: coverage-reports
-
-  # deploy_backend:
-  #   docker:
-  #     - image: circleci/node:12
-  #   steps:
-  #     - setup_remote_docker:
-  #         docker_layer_caching: true
-  #     - attach_workspace:
-  #         at: saved_images
-  #     - artifactory-orb/install
-  #     - artifactory-orb/configure
-  #     - artifactory-orb/docker-login:
-  #         docker-registry: ${ARTIFACTORY_REGISTRY}
-  #     - run:
-  #         name: Install haikunator
-  #         command: sudo npm install --global haikunator-cli
-  #     - run:
-  #         name: Tag and push docker
-  #         command: |
-  #           docker load -i saved_images/docker_image_backend.tar
-  #           export TAG=v-$(haikunator)-${CIRCLE_SHA1}
-  #           docker tag
-  #           docker push ${ARTIFACTORY_REGISTRY}
 
 workflows:
   version: 2.1
@@ -71,13 +32,3 @@ workflows:
     jobs:
       - pylint
       - deployment_checklist
-      # - deploy_backend:
-      #     requires:
-      #       - artifactory-orb/docker-publish
-      #       - pylint
-      #       - test_backend_crdb
-      #       - test_backend_postgres
-      #       - deployment_checklist
-      #     filters:
-      #       branches:
-      #         only: master
