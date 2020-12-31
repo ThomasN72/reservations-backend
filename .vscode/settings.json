@@ -1,0 +1,34 @@
+{
+  "[python]": {
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": true,
+      "source.fixAll": true
+    }
+  },
+  "python.sortImports.args": [
+    "--atomic",
+    "--src=${workspaceFolder}"
+  ],
+  "python.autoComplete.addBrackets": true,
+  "python.formatting.autopep8Args": [
+    "--aggressive",
+    "--aggressive",
+    "--max-line-length",
+    "100",
+    "--experimental"
+  ],
+  "python.formatting.provider": "autopep8",
+  "python.languageServer": "Microsoft",
+  "python.linting.enabled": true,
+  "python.linting.mypyEnabled": false,
+  "python.linting.pylintEnabled": true,
+  "python.linting.pylintUseMinimalCheckers": false,
+  "python.pythonPath": "/Users/tommyng/.local/share/virtualenvs/reservations-backend-mGNOdxJr/bin/python",
+  "python.analysis.completeFunctionParens": true,
+  "python.analysis.extraPaths": [
+    "./path-to-your-code"
+  ],
+  "python.linting.pylintArgs": [
+    "--load-plugins=pylint_django"
+  ],
+}
