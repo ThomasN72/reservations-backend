@@ -45,5 +45,9 @@ workflows:
     jobs:
       - docker-publish
       - pylint
+          requires:
+                - docker-publish
       - deployment-checklist
+          requires:
+                - docker-publish
       # - deploy-backend
