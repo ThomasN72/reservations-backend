@@ -44,10 +44,10 @@ workflows:
   backend_tag_for_release:
     jobs:
       - docker-publish
-      - pylint
+      - pylint:
           requires:
-                - docker-publish
-      - deployment-checklist
+            - docker-publish
+      - deployment-checklist:
           requires:
-                - docker-publish
+            - docker-publish
       # - deploy-backend
