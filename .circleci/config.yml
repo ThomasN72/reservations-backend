@@ -24,11 +24,11 @@ jobs:
 
   deployment_checklist:
     working_directory: /app
-    # docker:
-    #   - image: ${ARTIFACTORY_REGISTRY}
-    #     auth:
-    #       username: ${ARTIFACTORY_USER}
-    #       password: ${ARTIFACTORY_API_KEY}
+    docker:
+      #   - image: ${ARTIFACTORY_REGISTRY}
+      #     auth:
+      #       username: ${ARTIFACTORY_USER}
+      #       password: ${ARTIFACTORY_API_KEY}
       - image: circleci/postgres:latest
         environment:
           POSTGRES_USER: postgres
@@ -62,7 +62,7 @@ jobs:
   #         command: |
   #           docker load -i saved_images/docker_image_backend.tar
   #           export TAG=v-$(haikunator)-${CIRCLE_SHA1}
-  #           docker tag 
+  #           docker tag
   #           docker push ${ARTIFACTORY_REGISTRY}
 
 workflows:
