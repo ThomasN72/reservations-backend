@@ -35,8 +35,7 @@ workflows:
           tag: "${CIRCLE_SHA1}"
       - pylint:
           requires:
-            - artifactory-orb/docker-publish
+            - aws-ecr/build-and-push-image
       - deployment-checklist:
           requires:
-            - artifactory-orb/docker-publish
-      # - deploy-backend
+            - aws-ecr/build-and-push-image
