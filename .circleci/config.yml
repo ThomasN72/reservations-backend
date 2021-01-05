@@ -1,26 +1,13 @@
 version: 2.1
 
 orbs:
+  # aws-ecr: circleci/aws-ecr@6.15.2
   aws-cli: circleci/aws-cli@0.1.20 #AWS CLI functionality
   kubernetes: circleci/kubernetes@0.11.0
   aws-eks: circleci/aws-eks@0.2.0 #EKS (Managed Kubernetes Cluster)
   browser-tools: circleci/browser-tools@1.0.0
 
 jobs:
-  # artifactory-orb/docker-publish:
-  #   docker-registry: ${ARTIFACTORY_REGISTRY}
-  #   repository: docker-local
-  #   docker-tag: "reservation:latest/${ARTIFACTORY_REGISTRY}"
-  #   docker-steps:
-  #     - run: |
-  #         docker build -t ${DOCKERTAG} .
-  #         mkdir -p saved_images
-  #         docker save -o saved_images/docker_image_backend.tar $DOCKERTAG
-  #     - persist_to_workspace:
-  #         root: saved_images
-  #         paths:
-  #           - docker_image_backend.tar
-
   pylint:
     working_directory: /app
     docker:
@@ -41,21 +28,11 @@ jobs:
 
 workflows:
   version: 2.1
-  backend_tag_for_release:
+  build-and-deploy:
     jobs:
-      - artifactory-orb/docker-publish:
-          docker-registry: ${ARTIFACTORY_REGISTRY}
-          repository: docker-local
-          docker-tag: "reservation:latest/${ARTIFACTORY_REGISTRY}"
-          docker-steps:
-            - run: |
-                docker build -t ${DOCKERTAG} .
-                mkdir -p saved_images
-                docker save -o saved_images/docker_image_backend.tar $DOCKERTAG
-            - persist_to_workspace:
-                root: saved_images
-                paths:
-                  - docker_image_backend.tar
+      - aws-ecr/build-and-push-image:
+          repo: "${AWS_RESOURCE_NAME_PREFIX}"
+          tag: "${CIRCLE_SHA1}"
       - pylint:
           requires:
             - artifactory-orb/docker-publish
